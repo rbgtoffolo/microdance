@@ -1,0 +1,14 @@
+# Binários e objetos
+bin/
+obj/
+*.o
+*.app
+
+# Arquivos de IDE
+*.vcxproj*
+*.sln
+*.xcodeproj/
+*.xcworkspace/
+
+# Dados locais
+.DS_Store
