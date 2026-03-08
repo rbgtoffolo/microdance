@@ -18,9 +18,6 @@ void ofApp::setup(){
     
     //vidGrabber.setVerbose(true);
     vidGrabber.setup(640, 480);
-
-
-    // cria uma Tread Separada para rodar as chamadas para o MovDetector
     workerThread = std::thread(&ofApp::processFrames, this);
 }
 
@@ -30,9 +27,9 @@ void ofApp::update(){
     
     if (vidGrabber.isFrameNew()) {
         // Só processa um novo frame se o anterior já foi consumido pela thread.
-        // Isso descarta frames se o processamento for mais lento que a captura.
         if (!newFrameAvailable) {
             std::lock_guard<std::mutex> lock(frameMutex);
+
             // Cria um cv::Mat temporário usando os dados do ofPixels (RGB) e clona para a thread
             ofPixels & pixels = vidGrabber.getPixels();
             cv::Mat temp(pixels.getHeight(), pixels.getWidth(), CV_8UC3, pixels.getData());
@@ -57,6 +54,7 @@ void ofApp::exit(){
     if (workerThread.joinable()) {
         workerThread.join();
     }
+    vidGrabber.close();
 }
 
 void ofApp::processFrames() {
@@ -65,15 +63,11 @@ void ofApp::processFrames() {
             cv::Mat localFrame;
             {
                 std::lock_guard<std::mutex> lock(frameMutex);
-                // Swap é mais rápido que clone sob um lock, pois não copia dados de pixel.
-                // Apenas troca os ponteiros internos dos cv::Mat.
                 std::swap(localFrame, frameToProcess);
                 newFrameAvailable = false; // Marca que o frame foi "pego" pela thread.
             }
-            // A detecção de pose pesada acontece aqui, fora da thread principal
             dancer.update(localFrame);
         } else {
-            // Espera um pouco para não sobrecarregar a CPU com busy-waiting
             using namespace std::chrono_literals;
             std::this_thread::sleep_for(1ms);
         }
@@ -87,12 +81,16 @@ void ofApp::sendOscToSC(std::vector<glm::vec2> keypoints){
         m.addFloatArg(kp.x);
         m.addFloatArg(kp.y);
     }
-
     sender.sendMessage(m);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+    if (key == ' '){
+        ofxOscMessage m;
+        m.setAddress("/reset");
+        sender.sendMessage(m);
+    }
 
 }
 

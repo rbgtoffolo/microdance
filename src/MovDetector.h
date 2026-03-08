@@ -14,11 +14,6 @@ class MovDetector {
         std::vector<glm::vec2> getPoseKeypoints();
         
     private:
-        // Variáveis para processamento com OpenCV moderno (via ofxCv)
-        cv::Mat currentFrame;
-        cv::Mat previousFrame;
-        cv::Mat diffFrame;
-        
         // Pose detection
         cv::dnn::Net net;
         std::vector<glm::vec2> keypoints;

@@ -86,18 +86,18 @@ void MovDetector::trace() {
         {11,13}, {13,15}, {12,14}, {14,16}       // Pernas
     };
     
-    ofSetLineWidth(3);
+    ofSetLineWidth(2);
     for(auto& p : pairs) {
         if(keypoints[p.first].x != -1 && keypoints[p.second].x != -1) {
-            ofSetColor(0, 255, 0, 200);
+            ofSetColor(0, 255, 0, 127);
             ofDrawLine(keypoints[p.first], keypoints[p.second]);
         }
     }
 
     for(const auto& kp : keypoints) {
         if(kp.x != -1) {
-            ofSetColor(255, 0, 50);
-            ofDrawCircle(kp, 5);
+            ofSetColor(255, 0, 50, 127);
+            ofDrawCircle(kp, 3);
         }
     }
     ofPopStyle();
