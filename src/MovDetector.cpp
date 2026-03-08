@@ -70,13 +70,20 @@ void MovDetector::update(cv::Mat frame) {
 
     std::lock_guard<std::mutex> lock(mtx);
     keypoints = nextKeypoints;
+    imgWidth = frame.cols;
+    imgHeight = frame.rows;
 }
 
-void MovDetector::trace() {
+void MovDetector::trace(float x, float y, float w, float h) {
     std::lock_guard<std::mutex> lock(mtx);
     if(keypoints.empty()) return;
 
     ofPushStyle();
+    ofPushMatrix();
+    ofTranslate(x, y);
+    if (imgWidth > 0 && imgHeight > 0) {
+        ofScale(w / imgWidth, h / imgHeight);
+    }
     
     // Mapeamento COCO (17 pontos) - O padrão do YOLO
     std::vector<std::pair<int, int>> pairs = {
@@ -100,6 +107,7 @@ void MovDetector::trace() {
             ofDrawCircle(kp, 3);
         }
     }
+    ofPopMatrix();
     ofPopStyle();
 }
 

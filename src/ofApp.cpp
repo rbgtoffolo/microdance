@@ -44,8 +44,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255);
-    vidGrabber.draw(0, 0); // Desenha a imagem da câmera no fundo
-    dancer.trace();
+    vidGrabber.draw(0, 0, ofGetWidth(), ofGetHeight()); // Desenha a imagem da câmera no fundo
+    dancer.trace(0, 0, ofGetWidth(), ofGetHeight());
 }
 
 //--------------------------------------------------------------

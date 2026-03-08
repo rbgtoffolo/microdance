@@ -9,7 +9,7 @@ class MovDetector {
     public:
         void setup(string modelPath);
         void update(cv::Mat frame);
-        void trace();
+        void trace(float x, float y, float w, float h);
 
         std::vector<glm::vec2> getPoseKeypoints();
         
@@ -18,5 +18,7 @@ class MovDetector {
         cv::dnn::Net net;
         std::vector<glm::vec2> keypoints;
         std::mutex mtx;
+        float imgWidth = 640;
+        float imgHeight = 480;
 
 };
